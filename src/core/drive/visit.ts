@@ -168,6 +168,7 @@ export class Visit implements FetchRequestDelegate {
     if (this.state == VisitState.initialized) {
       this.recordTimingMetric(TimingMetric.visitStart)
       this.state = VisitState.started
+      console.log(`Visit.start`)
       this.adapter.visitStarted(this)
       this.delegate.visitStarted(this)
     }
@@ -293,15 +294,18 @@ export class Visit implements FetchRequestDelegate {
 
   loadCachedSnapshot() {
     const snapshot = this.getCachedSnapshot()
+    console.log(`Visit.loadCachedSnapshot snapshot=${snapshot}`)
     if (snapshot) {
       const isPreview = this.shouldIssueRequest()
+      console.log(`Visit.loadCachedSnapshot snapshot=${snapshot} isPreview=${isPreview} isSamePage=${this.isSamePage}`)
       this.render(async () => {
-        this.cacheSnapshot()
+        const updatedSnapshot = await this.cacheSnapshot()
+        const renderableSnapshot = updatedSnapshot || snapshot
         if (this.isSamePage) {
           this.adapter.visitRendered(this)
         } else {
           if (this.view.renderPromise) await this.view.renderPromise
-          await this.view.renderPage(snapshot, isPreview, this.willRender, this)
+          await this.view.renderPage(renderableSnapshot, isPreview, this.willRender, this)
           this.performScroll()
           this.adapter.visitRendered(this)
           if (!isPreview) {
@@ -456,10 +460,14 @@ export class Visit implements FetchRequestDelegate {
     }
   }
 
-  cacheSnapshot() {
+  async cacheSnapshot() {
+    console.log(`Visit.cacheSnapshot snapshotCached=${this.snapshotCached}`)
     if (!this.snapshotCached) {
-      this.view.cacheSnapshot(this.snapshot).then((snapshot) => snapshot && this.visitCachedSnapshot(snapshot))
+      const snapshot = await this.view.cacheSnapshot(this.snapshot)
+      snapshot && this.visitCachedSnapshot(snapshot)
+      console.log(`Visit.cacheSnapshot callback`)
       this.snapshotCached = true
+      return snapshot
     }
   }
 

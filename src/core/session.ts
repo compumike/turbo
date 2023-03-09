@@ -111,6 +111,7 @@ export class Session
 
   visit(location: Locatable, options: Partial<VisitOptions> = {}) {
     const frameElement = options.frame ? document.getElementById(options.frame) : null
+    console.log(`Session.visit(frameElement=${frameElement})`)
 
     if (frameElement instanceof FrameElement) {
       frameElement.src = location.toString()
@@ -194,6 +195,8 @@ export class Session
   followedLinkToLocation(link: Element, location: URL) {
     const action = this.getActionForLink(link)
     const acceptsStreamResponse = link.hasAttribute("data-turbo-stream")
+
+    console.log(`Session.followedLinkToLocation(link=${link}, location=${location}`)
 
     this.visit(location.href, { action, acceptsStreamResponse })
   }

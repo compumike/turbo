@@ -40,12 +40,14 @@ export class PageView extends View<HTMLBodyElement, PageSnapshot, PageViewRender
   }
 
   async cacheSnapshot(snapshot: PageSnapshot = this.snapshot) {
+    console.log(`PageView.cacheSnapshot isCacheable=${snapshot.isCacheable}`)
     if (snapshot.isCacheable) {
       this.delegate.viewWillCacheSnapshot()
       const { lastRenderedLocation: location } = this
       await nextEventLoopTick()
       const cachedSnapshot = snapshot.clone()
       this.snapshotCache.put(location, cachedSnapshot)
+      console.log(`PageView.cacheSnapshot put new snapshot`)
       return cachedSnapshot
     }
   }

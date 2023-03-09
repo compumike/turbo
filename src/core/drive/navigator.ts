@@ -37,6 +37,7 @@ export class Navigator {
       referrer: this.location,
       ...options,
     })
+    console.log(`Navigator.startVisit(locatable=${locatable}, restorationIdentifier=${restorationIdentifier}, options=${options}, this.referrer: ${this.currentVisit.referrer}, this.currentVisit=${this.currentVisit})`)
     this.currentVisit.start()
   }
 
@@ -142,11 +143,13 @@ export class Navigator {
     const currentAnchor = getAnchor(this.view.lastRenderedLocation)
     const isRestorationToTop = action === "restore" && typeof anchor === "undefined"
 
-    return (
+    const result =
       action !== "replace" &&
       getRequestURL(location) === getRequestURL(this.view.lastRenderedLocation) &&
       (isRestorationToTop || (anchor != null && anchor !== currentAnchor))
-    )
+
+    console.log(`Navigator.locationWithActionIsSamePage(location=${location}, action=${action}) => ${result}`)
+    return result
   }
 
   visitScrolledToSamePageLocation(oldURL: URL, newURL: URL) {

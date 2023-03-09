@@ -24,11 +24,13 @@ export class BrowserAdapter implements Adapter {
   }
 
   visitProposedToLocation(location: URL, options?: Partial<VisitOptions>) {
+    console.log(`BrowserAdapter.visitProposedToLocation(location=${location}, options=${options}`)
     this.navigator.startVisit(location, options?.restorationIdentifier || uuid(), options)
   }
 
   visitStarted(visit: Visit) {
     this.location = visit.location
+    console.log(`BrowserAdapter.visitStarted`)
     visit.loadCachedSnapshot()
     visit.issueRequest()
     visit.goToSamePageAnchor()

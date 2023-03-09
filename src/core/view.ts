@@ -83,6 +83,7 @@ export abstract class View<
 
   async render(renderer: R) {
     const { isPreview, shouldRender, newSnapshot: snapshot } = renderer
+    console.log(`View.render(isPreview=${isPreview}, shouldRender=${shouldRender}, newSnapshot=${snapshot}`)
     if (shouldRender) {
       try {
         this.renderPromise = new Promise((resolve) => (this.resolveRenderPromise = resolve))
@@ -118,6 +119,7 @@ export abstract class View<
   }
 
   markAsPreview(isPreview: boolean) {
+    console.log(`View.markAsPreview(${isPreview})`)
     if (isPreview) {
       this.element.setAttribute("data-turbo-preview", "")
     } else {
